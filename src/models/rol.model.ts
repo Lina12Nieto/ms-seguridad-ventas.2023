@@ -1,4 +1,4 @@
-import {Entity, model, property, hasMany} from '@loopback/repository';
+import {Entity, hasMany, model, property} from '@loopback/repository';
 import {Menu} from './menu.model';
 import {RolMenu} from './rol-menu.model';
 import {Usuario} from './usuario.model';
@@ -22,9 +22,6 @@ export class Rol extends Entity {
     type: 'string',
   })
   Comentarios?: string;
-
-  @hasMany(() => Menu, {through: {model: () => RolMenu}})
-  (menus): Menu[];
 
   @hasMany(() => Menu, {through: {model: () => RolMenu}})
   menus: Menu[];
