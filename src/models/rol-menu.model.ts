@@ -39,6 +39,15 @@ export class RolMenu extends Entity {
   })
   descragar: boolean;
 
+  @property({
+    type: 'string',
+  })
+  rolId?: string;
+
+  @property({
+    type: 'string',
+  })
+  menuId?: string;
   // Define well-known properties here
 
   // Indexer property to allow additional data
