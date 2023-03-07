@@ -189,7 +189,7 @@ export class UsuarioController {
       login.estadoCodigo2fa = false;
       login.token = "";
       login.estadoToken = false;
-      this.respositorioLogin.create(login);
+      await this.respositorioLogin.create(login);
       usuario.clave = "";
       //NOTIFICAR AL USUARIO VIA CORREO O SMS
       return usuario;
@@ -220,7 +220,7 @@ export class UsuarioController {
       if (usuario){
         usuario.clave="";
         try{
-          this.usuarioRepository.logins(usuario._id).patch(
+         await this.usuarioRepository.logins(usuario._id).patch(
             {
               estadoCodigo2fa: true,
               token:token
