@@ -29,7 +29,6 @@ export class SeguridadUsuarioService {
     return password;
   }
 
-
   /**
    * Cifrar una cadea con metodos md5
    * @param cadena texto a cifrar
@@ -38,7 +37,6 @@ export class SeguridadUsuarioService {
   cifrarTexto(cadena:string):string{
     const cadenaCifrada = MD5(cadena).toString();
     return cadenaCifrada;
-
   }
 
   /**
@@ -64,14 +62,14 @@ export class SeguridadUsuarioService {
   */
 
   async validarCodigo2fa(credenciales2fa:FactorDeAutenticacionPorCodigo):Promise <Usuario | null>{
-    const login = this.repositorioLogin.findOne({
+    const login = await this.repositorioLogin.findOne({
       where:{
         usuarioId: credenciales2fa.usuarioId,
         codigo2fa: credenciales2fa.codigo2fa,
         estadoCodigo2fa:false
       }
     });
-    if (login){
+    if(login){
       const usuario = await this.repositorioUsuario.findById(credenciales2fa.usuarioId);
       return usuario;
     }
@@ -88,9 +86,8 @@ export class SeguridadUsuarioService {
       name:`${usuario.primerNombre}${usuario.segundoNombre}${usuario.primerApellido}${usuario.segundoApellido}${usuario.celular}`,
       role: usuario.rolId,
       email: usuario.correo
-
-    }
-    const token = jwt.sign({ foo: 'bar' }, ConfiguracionSeguridad.claveJWT);
+    };
+    const token = jwt.sign(datos, ConfiguracionSeguridad.claveJWT);
     return token;
   }
 }
