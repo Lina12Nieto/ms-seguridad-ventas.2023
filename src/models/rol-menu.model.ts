@@ -37,7 +37,7 @@ export class RolMenu extends Entity {
     type: 'boolean',
     required: true,
   })
-  descragar: boolean;
+  descargar: boolean;
 
   @property({
     type: 'string',
