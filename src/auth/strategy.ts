@@ -15,7 +15,7 @@ export class AuthStrategy implements AuthenticationStrategy {
     @service(SeguridadUsuarioService)
     private serviceSeguridead:SeguridadUsuarioService,
     @inject(AuthenticationBindings.METADATA)
-    private metadata: AuthenticationMetadata,
+    private metadata: AuthenticationMetadata[],
     @repository(RolMenuRepository)
     private repositorioRolMenu:RolMenuRepository
   ) {
@@ -32,8 +32,9 @@ export class AuthStrategy implements AuthenticationStrategy {
     const token = parseBearerToken(request);
     if(token){
       const idRol = this.serviceSeguridead.obtenerRolDesdeToken(token);
-      const idMenu: string = this.metadata.options![0];
-      const accion: string = this.metadata.options![1];
+      const idMenu: string = this.metadata[0].options![0];
+      const accion: string = this.metadata[0].options![1];
+      console.log(this.metadata)
 
 
       const permiso = await this.repositorioRolMenu.findOne({
@@ -42,8 +43,10 @@ export class AuthStrategy implements AuthenticationStrategy {
           menuId:idMenu
         }
       });
+      console.log(permiso)
       let continuar = false;
       if(permiso){
+        console.log("si se esta entrando a esta funcion :)",permiso)
         switch (accion) {
           case "guardar":
             continuar=permiso.guardar;

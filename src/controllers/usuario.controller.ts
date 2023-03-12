@@ -69,7 +69,7 @@ export class UsuarioController {
   }
 
   @authenticate({
-    strategy:"auth'",
+    strategy:"auth",
     options:[ConfiguracionSeguridad.menuUsuarioId, ConfiguracionSeguridad.listarAccion]
   })
   @get('/usuario')
