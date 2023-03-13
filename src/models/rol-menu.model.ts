@@ -1,6 +1,6 @@
 import {Entity, model, property} from '@loopback/repository';
 
-@model({settings: {strict: false}})
+@model()
 export class RolMenu extends Entity {
   @property({
     type: 'string',
@@ -50,9 +50,6 @@ export class RolMenu extends Entity {
   menuId?: string;
   // Define well-known properties here
 
-  // Indexer property to allow additional data
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [prop: string]: any;
 
   constructor(data?: Partial<RolMenu>) {
     super(data);
