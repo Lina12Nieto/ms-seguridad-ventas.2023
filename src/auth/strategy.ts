@@ -6,7 +6,7 @@ import {Request} from '@loopback/rest/dist/types';
 import {UserProfile} from '@loopback/security';
 import parseBearerToken from 'parse-bearer-token';
 import {RolMenuRepository} from '../repositories';
-import {SeguridadUsuarioService} from '../services';
+import {AuthService, SeguridadUsuarioService} from '../services';
 
 export class AuthStrategy implements AuthenticationStrategy {
   name = 'auth';
@@ -17,7 +17,9 @@ export class AuthStrategy implements AuthenticationStrategy {
     @inject(AuthenticationBindings.METADATA)
     private metadata: AuthenticationMetadata[],
     @repository(RolMenuRepository)
-    private repositorioRolMenu:RolMenuRepository
+    private repositorioRolMenu:RolMenuRepository,
+    @service(AuthService)
+    private servicioAuth: AuthService
   ) {}
 
   /**
@@ -33,49 +35,11 @@ export class AuthStrategy implements AuthenticationStrategy {
       const idMenu: string = this.metadata[0].options![0];
       const accion: string = this.metadata[0].options![1];
       console.log(this.metadata);
-      /*.log(idMenu);
-      console.log(accion);
-      console.log(idRol);*/
-
-
-      const permiso = await this.repositorioRolMenu.findOne({
-        where:{
-          rolId : idRol,
-          menuId:idMenu
-        }
-      });
-
-      let continuar = false;
-      if(permiso){
-        switch (accion) {
-          case "guardar":
-            continuar=permiso.guardar;
-            break;
-          case "editar":
-            continuar= permiso.editar;
-            break;
-          case "listar":
-            continuar= permiso.listar;
-            break;
-          case "eliminar":
-            continuar= permiso.eliminar;
-            break;
-          case "descargar":
-            continuar = permiso.descargar;
-            break;
-          default:
-            throw new HttpErrors[401]("No es posible ejecutar la accion porque no existe.");
-        }
-        if(continuar){
-          const perfil: UserProfile= Object.assign({
-            permitido: "Ok"
-          });
-          return perfil;
-        }else{
-          return undefined;
-        }
-      }else{
-        throw new HttpErrors[401]("No es posible ejecutar la accion por falta de permisos");
+      try{
+        const res = await this.servicioAuth.verificarPermisoDeUsuarioPorRol(idRol, idMenu, accion);
+        return res;
+      }catch(e){
+        throw e;
       }
     }
    throw new HttpErrors[401]("No es posible ejecutar la accion por falta de un token");

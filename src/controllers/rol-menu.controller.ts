@@ -21,6 +21,9 @@ import {
 import {RolRepository} from '../repositories';
 
 export class RolMenuController {
+  /*findOne(arg0: {where: {rolId: string; menuId: string;};}) {
+    throw new Error('Method not implemented.');
+  }*/
   constructor(
     @repository(RolRepository) protected rolRepository: RolRepository,
   ) { }
