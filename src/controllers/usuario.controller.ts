@@ -224,7 +224,8 @@ export class UsuarioController {
    datos:PermisosRolMenu
 
   ): Promise<UserProfile | undefined> {
-    return this.serviceoAuth.verificarPermisoDeUsuarioPorRol(datos.idRol, datos.idMenu, datos.accion);
+    let idRol = this.servicioSeguridad.obtenerRolDesdeToken(datos.token);
+    return this.serviceoAuth.verificarPermisoDeUsuarioPorRol(idRol, datos.idMenu, datos.accion);
 
   }
 
