@@ -63,6 +63,7 @@ export class UsuarioController {
     const claveCifrada = this.servicioSeguridad.cifrarTexto(clave)
     //asignar la clave  un usuario
     usuario.clave = claveCifrada;
+    usuario.estadoValidacion=true;
     //enviar correo electronico de notificaciones
     return this.usuarioRepository.create(usuario);
   }
