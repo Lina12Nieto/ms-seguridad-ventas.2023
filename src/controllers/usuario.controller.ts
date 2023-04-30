@@ -16,7 +16,7 @@ import {
 import {UserProfile} from '@loopback/security';
 import {ConfiguracionNotificaciones} from '../config/notificaciones.config';
 import {ConfiguracionSeguridad} from '../config/seguridad.config';
-import {Credenciales, FactorDeAutenticacionPorCodigo, Login, PermisosRolMenu, Usuario} from '../models';
+import {Credenciales, FactorDeAutenticacionPorCodigo, HashValidacionUsuario, Login, PermisosRolMenu, Usuario} from '../models';
 import {LoginRepository, UsuarioRepository} from '../repositories';
 import {AuthService, NotificacionesService, SeguridadUsuarioService} from '../services';
 
@@ -109,10 +109,49 @@ export class UsuarioController {
     };
     let url = ConfiguracionNotificaciones.urlNotificaciones2fa;
     this.servicioNotificaciones.EnviarCorreElectronico(datos,url);
-
+    // Enviar de clave
+    let datosCorreo = {
+      correoDestino: usuario.correo,
+      nombreDestino:usuario.primerNombre + " " + usuario.segundoNombre,
+      contenidoCorreo:`Su clave asignada es: ${clave}`,
+      asuntocorreo:ConfiguracionNotificaciones.claveAsignada,
+    };
+    this.servicioNotificaciones.EnviarCorreElectronico(datosCorreo,url);
     //enviar correo electronico de notificaciones
     return this.usuarioRepository.create(usuario);
   }
+
+  // Validar Codigo Hash
+
+  @post('/validar-hash-usuario')
+  @response(200, {
+    description: 'Validar hash'
+  })
+    async ValidarHahUsuario(
+      @requestBody({
+        content: {
+          'application/json': {
+            schema: getModelSchemaRef(HashValidacionUsuario, {}),
+          },
+        },
+      })
+      hash: HashValidacionUsuario,
+  ): Promise<boolean> {
+    let usuario = await this.usuarioRepository.findOne({
+      where:{
+        hashValidacion: hash.codigohash,
+        estadoValidacion: false
+      }
+    });
+    if(usuario){
+      usuario.estadoValidacion = true;
+      this.usuarioRepository.replaceById(usuario._id, usuario);
+      return true;
+    }
+    return false;
+
+  }
+
 
   @get('/usuario/count')
   @response(200, {
