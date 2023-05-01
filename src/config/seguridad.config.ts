@@ -7,4 +7,5 @@ export namespace ConfiguracionSeguridad{
   export const eliminarAccion = "eliminar";
   export const descargarAccion = "descargar";
   export const mongodbConnectionString = process.env.CONNECCTION_STRING_MONGODB;
+  export const rolUsusaioPublico = "";//falta crear el usuario publico
 }

@@ -1,8 +1,8 @@
 import { /* inject, */ BindingScope, injectable} from '@loopback/core';
 import {repository} from '@loopback/repository';
 import {ConfiguracionSeguridad} from '../config/seguridad.config';
-import {Credenciales, FactorDeAutenticacionPorCodigo, Usuario} from '../models';
-import {LoginRepository, UsuarioRepository} from '../repositories';
+import {Credenciales, FactorDeAutenticacionPorCodigo, RolMenu, Usuario} from '../models';
+import {LoginRepository, RolMenuRepository, UsuarioRepository} from '../repositories';
 const generator = require('generate-password');
 const MD5 = require("crypto-js/md5");
 const jwt = require('jsonwebtoken');
@@ -13,7 +13,9 @@ export class SeguridadUsuarioService {
     @repository(UsuarioRepository)
     public repositorioUsuario: UsuarioRepository,
     @repository(LoginRepository)
-    public repositorioLogin:LoginRepository
+    public repositorioLogin:LoginRepository,
+    @repository(RolMenuRepository)
+    private repositorioMenuRol: RolMenuRepository
   ) {}
 
   /**
@@ -101,4 +103,20 @@ export class SeguridadUsuarioService {
     const obj = jwt.verify(tk, ConfiguracionSeguridad.claveJWT);
     return obj.role;
   }
+  /**
+   * Retorna los permisos del rol
+   * @param idRol id del rol al buscar y que esta asociada al usuario
+   */
+  async ConsultarPermisosDeMenuPorUsuario(idRol:string): Promise<RolMenu[]>{
+    let menu: RolMenu[] = await this.repositorioMenuRol.find(
+      {
+        where:{
+          listar:true,
+          rolId: idRol
+        }
+      }
+    );
+    return menu;
+  }
+
 }
